@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Профориентационная RPG — Климов</title>
+  <!--
+    NOTE: This game loads quests.json via fetch().
+    If opening directly from the filesystem (file:// protocol), the fetch may be
+    blocked by CORS. Serve from a local HTTP server for full functionality:
+      Python: python -m http.server 8080
+      Node:   npx serve .
+    Then open: http://localhost:8080
+    The game includes an inline fallback so it also works via file://.
+  -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ======================================================
+       SCREEN 1 — GENDER SELECTION
+       ====================================================== -->
+  <div id="screen-gender" class="screen active">
+    <h1 class="game-title">Профориентационная RPG</h1>
+    <p class="game-subtitle">Исследуй город, помогай горожанам и узнай, какой тип профессии тебе подходит по классификации Климова.</p>
+
+    <div class="gender-cards">
+       <div class="gender-card" id="card-male" role="button" tabindex="0" aria-label="Выбрать персонажа: Парень">
+         <img id="hero-preview-male" src="./Картинки/персонаж/главный герой/вниз стоит.png" alt="Главный герой (вниз)" >
+         <div class="card-label">Парень</div>
+       </div>
+       <div class="gender-card" id="card-female" role="button" tabindex="0" aria-label="Выбрать персонажа: Девушка">
+         <img id="hero-preview-female" src="./Картинки/персонаж/главная героиня/вниз стоит.png" alt="Главная героиня (вниз)" >
+         <div class="card-label">Девушка</div>
+       </div>
+    </div>
+
+    <div id="loading-status">Загрузка ресурсов…</div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 2 — GAME WORLD
+       ====================================================== -->
+  <div id="screen-game" class="screen">
+
+    <!-- HUD bar -->
+    <div id="hud">
+      <div id="hud-location">Главный экран</div>
+      <div id="hud-progress">0 / 20</div>
+      <div class="hud-dots" id="hud-dots" aria-hidden="true"></div>
+    </div>
+
+    <!-- Game world (below HUD) -->
+    <div id="game-world">
+      <!-- Layer 1: location background image -->
+      <img id="location-img" src="" alt="Локация" draggable="false">
+
+      <!-- Layer 2: canvas overlay for hero + NPC indicators -->
+      <canvas id="game-canvas" aria-hidden="true"></canvas>
+
+      <!-- Location name label (fades in on transition) -->
+      <div id="location-label"></div>
+
+      <!-- Exit hint -->
+      <div id="exit-hint">Подойдите к выходу, чтобы вернуться на карту</div>
+
+      <!-- Hub location selection overlay -->
+      <div id="hub-overlay">
+        <h2>Выберите район для посещения</h2>
+        <div class="hub-location-grid" id="hub-location-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================
+       SCREEN 3 — DIALOGUE OVERLAY (rendered on top of game)
+       ====================================================== -->
+       <div id="screen-dialogue" class="screen" style="z-index: 10;">
+    <div id="dialogue-backdrop"></div>
+
+    <div id="dialogue-panel" role="dialog" aria-modal="true" aria-labelledby="dialogue-quest-title">
+      <div id="dialogue-header">
+        <img id="npc-avatar" src="" alt="NPC">
+        <div id="dialogue-text-block">
+          <div id="dialogue-npc-name"></div>
+          <div id="dialogue-quest-title"></div>
+          <div id="dialogue-quest-text"></div>
+        </div>
+      </div>
+
+      <div id="dialogue-answers" role="group" aria-label="Варианты ответа">
+        <button class="answer-btn" data-letter="А" data-index="0"></button>
+        <button class="answer-btn" data-letter="Б" data-index="1"></button>
+        <button class="answer-btn" data-letter="В" data-index="2"></button>
+        <button class="answer-btn" data-letter="Г" data-index="3"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 4 — RESULTS
+       ====================================================== -->
+  <div id="screen-results" class="screen">
+    <h2 id="results-title">Результаты</h2>
+
+    <div id="winner-card">
+      <div id="winner-type-badge">—</div>
+      <div id="winner-type-name">—</div>
+      <div id="winner-description">—</div>
+      <div id="winner-careers"></div>
+    </div>
+
+    <div id="score-bars">
+      <h3>Распределение баллов</h3>
+      <!-- Populated by JS -->
+    </div>
+
+    <button id="btn-restart">Пройти снова</button>
+  </div>
+
+  <!-- ======================================================
+       INLINE QUEST DATA FALLBACK (for file:// access)
+       The game.js will use this if fetch() fails.
+       ====================================================== -->
+  <script id="quest-data-fallback" type="application/json">
+  </script>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
